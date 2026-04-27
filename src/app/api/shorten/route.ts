@@ -1,8 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient } from "@/lib/supabase";
 import { generateShortCode } from "@/lib/utils";
 
+type RequestBody = {
+  url: string;
+};
+
 export async function POST(request: Request) {
-  const body: { url: string } = await request.json();
+  const body: RequestBody = await request.json();
   const url = body.url;
 
   if (!url) {
@@ -15,23 +19,35 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid URL format" }, { status: 400 });
   }
 
-  const shortUrl = generateShortCode(6);
+  let shortUrl = "";
+  let attempts = 0;
+  const MAX_ATTEMPTS = 5;
+  const supabase = getSupabaseClient();
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-  );
+  while (attempts < MAX_ATTEMPTS) {
+    shortUrl = generateShortCode(6);
 
-  const { error } = await supabase.from("links").insert({
-    original_url: url,
-    short_url: shortUrl,
-  });
+    const { error } = await supabase.from("links").insert({
+      original_url: url,
+      short_url: shortUrl,
+    });
 
-  if (error) {
-    return Response.json(
-      { error: "Failed to create short link" },
-      { status: 500 },
-    );
+    if (!error) {
+      break;
+    }
+
+    if (error.code !== "23505") {
+      return Response.json(
+        { error: "Failed to create short link" },
+        { status: 500 },
+      );
+    }
+
+    attempts++;
+  }
+
+  if (attempts >= MAX_ATTEMPTS) {
+    return Response.json({ error: "Too many collisions" }, { status: 500 });
   }
 
   return Response.json({ originalUrl: url, shortUrl: shortUrl });
