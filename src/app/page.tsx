@@ -6,13 +6,24 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 export default function Home() {
-  const [link, setLink] = useState("");
+  const [url, setUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState("");
 
-  function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const url = formData.get("url") as string;
-    setLink(url);
+
+    const res = await fetch("/api/shorten", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: url }),
+    });
+
+    const data = await res.json();
+
+    setShortUrl(data.shortUrl);
+    console.log(data.shortUrl);
   }
 
   return (
@@ -34,6 +45,7 @@ export default function Home() {
               name="url"
               className="flex-1 rounded-md p-3 h-11 bg-neutral-900 border border-neutral-700"
               placeholder="Paste a long URL..."
+              onChange={(e) => setUrl(e.target.value)}
             />
             <Button
               type="submit"
@@ -48,12 +60,11 @@ export default function Home() {
           <p className="text-sm text-neutral-400">
             Shortened link will appear here:
           </p>
-
           <div
             aria-live="polite"
             className="p-3 rounded-md bg-neutral-900 border border-neutral-800 text-sm"
           >
-            {link}
+            {shortUrl}
           </div>
         </div>
       </section>
