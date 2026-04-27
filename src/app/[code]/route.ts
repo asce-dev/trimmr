@@ -2,11 +2,10 @@ import { redirect } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase";
 import { validateURL } from "@/lib/url";
 
-export async function GET({
-  params,
-}: {
-  params: Promise<{ code: string }>;
-}): Promise<Response> {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ code: string }> },
+): Promise<Response> {
   const { code } = await params;
 
   const supabase = getSupabaseClient();
