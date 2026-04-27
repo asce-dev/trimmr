@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase";
+import { validateURL } from "@/lib/url";
 
 export async function GET({
   params,
@@ -17,6 +18,11 @@ export async function GET({
 
   if (error || !data) {
     return Response.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const validation = validateURL(data.original_url);
+  if (!validation.ok) {
+    return Response.json({ error: validation.error }, { status: 400 });
   }
 
   redirect(data.original_url);

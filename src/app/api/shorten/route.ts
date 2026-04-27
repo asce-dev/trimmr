@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "@/lib/supabase";
+import { validateURL } from "@/lib/url";
 import { generateShortCode } from "@/lib/utils";
 
 type RequestBody = {
@@ -13,10 +14,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "Missing url" }, { status: 400 });
   }
 
-  try {
-    new URL(url);
-  } catch {
-    return Response.json({ error: "Invalid URL format" }, { status: 400 });
+  const validation = validateURL(url);
+
+  if (!validation.ok) {
+    return Response.json({ error: validation.error }, { status: 400 });
   }
 
   let shortUrl = "";
