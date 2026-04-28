@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Scissors } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { Copy } from "lucide-react";
 
 export default function Home() {
   const [url, setUrl] = useState("");
-  const [shortUrl, setShortUrl] = useState("");
+  const [fullUrl, setFullUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
@@ -27,10 +29,17 @@ export default function Home() {
 
       const data = await res.json();
 
-      setShortUrl(data.shortUrl);
+      setFullUrl(process.env.NEXT_PUBLIC_BASE_URL + "/" + data.shortUrl);
+      navigator.clipboard.writeText(
+        process.env.NEXT_PUBLIC_BASE_URL + "/" + data.shortUrl,
+      );
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(fullUrl);
   }
 
   return (
@@ -56,7 +65,7 @@ export default function Home() {
             />
             <Button
               type="submit"
-              className="px-6 py-2 h-11 rounded-md bg-white text-black gap-2 disabled:opacity-50"
+              className="px-6 py-2 h-11 rounded-md bg-white text-black gap-2 disabled:opacity-50 cursor-pointer"
               disabled={loading}
             >
               {!loading ? (
@@ -74,14 +83,41 @@ export default function Home() {
           </Field>
         </form>
 
-        {shortUrl ? (
+        {fullUrl ? (
           <div className="mt-6 space-y-2">
-            <p className="text-sm text-neutral-400">Shortened link:</p>
+            <p className="text-sm text-neutral-400">Trimm'd link:</p>
             <div
               aria-live="polite"
-              className="p-3 rounded-md bg-neutral-900 border border-neutral-800 text-sm"
+              className="px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-between"
             >
-              {shortUrl}
+              <a
+                href={`${fullUrl}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="hover:underline truncate"
+              >
+                {fullUrl}
+              </a>
+              <div className="flex gap-1">
+                <a
+                  href={`${fullUrl}`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label="Open link"
+                  className="p-2 rounded-md hover:bg-neutral-800 transition flex items-center justify-center"
+                >
+                  <ExternalLink className="w-4 h-4 text-neutral-300" />
+                </a>
+                <Button
+                  type="button"
+                  onClick={handleCopy}
+                  aria-label="Copy link"
+                  title="Copy link"
+                  className="p-2 rounded-md hover:bg-neutral-800 transition cursor-pointer"
+                >
+                  <Copy className="w-4 h-4 text-neutral-300" />
+                </Button>
+              </div>
             </div>
           </div>
         ) : (
