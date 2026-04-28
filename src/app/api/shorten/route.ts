@@ -23,10 +23,11 @@ export async function POST(request: Request) {
   let shortUrl = "";
   let attempts = 0;
   const MAX_ATTEMPTS = 5;
+  const SHORT_CODE_LENGTH = 6;
   const supabase = getSupabaseClient();
 
   while (attempts < MAX_ATTEMPTS) {
-    shortUrl = generateShortCode(6);
+    shortUrl = generateShortCode(SHORT_CODE_LENGTH);
 
     const { error } = await supabase.from("links").insert({
       original_url: url,
