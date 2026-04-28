@@ -15,6 +15,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [fullUrl, setFullUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const base = process.env.NEXT_PUBLIC_BASE_URL ?? window.location.origin;
 
   async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     try {
@@ -36,11 +37,10 @@ export default function Home() {
       }
 
       const data = await res.json();
+      const trimmedUrl = `${base}/${data.shortUrl}`;
 
-      setFullUrl(process.env.NEXT_PUBLIC_BASE_URL + "/" + data.shortUrl);
-      navigator.clipboard.writeText(
-        process.env.NEXT_PUBLIC_BASE_URL + "/" + data.shortUrl,
-      );
+      setFullUrl(trimmedUrl);
+      navigator.clipboard.writeText(trimmedUrl);
       toast.success("Link created and copied");
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-neutral-950 text-white">
       <Toaster position="top-center" />
-      <section className="w-full max-w-md space-y-4">
+      <section className="w-full max-w-md space-y-4 p-3">
         <header>
           <h1 className="text-3xl font-bold text-center">Trimmr</h1>
         </header>
@@ -102,7 +102,7 @@ export default function Home() {
               className="px-3 py-2 rounded-md bg-neutral-900 text-sm border border-neutral-800 flex items-center justify-between"
             >
               <a
-                href={`${fullUrl}`}
+                href={fullUrl}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="hover:underline truncate"
@@ -111,7 +111,7 @@ export default function Home() {
               </a>
               <div className="flex gap-1">
                 <a
-                  href={`${fullUrl}`}
+                  href={fullUrl}
                   target="_blank"
                   rel="noreferrer noopener"
                   aria-label="Open link"
@@ -131,9 +131,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        ) : (
-          ""
-        )}
+        ) : null}
       </section>
     </main>
   );
