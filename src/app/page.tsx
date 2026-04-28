@@ -8,6 +8,8 @@ import { Loader2 } from "lucide-react";
 import { Scissors } from "lucide-react";
 import { ExternalLink } from "lucide-react";
 import { Copy } from "lucide-react";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -27,12 +29,19 @@ export default function Home() {
         body: JSON.stringify({ url: url }),
       });
 
+      if (!res.ok) {
+        const err = await res.json();
+        toast.error(err.error || "Something went wrong");
+        return;
+      }
+
       const data = await res.json();
 
       setFullUrl(process.env.NEXT_PUBLIC_BASE_URL + "/" + data.shortUrl);
       navigator.clipboard.writeText(
         process.env.NEXT_PUBLIC_BASE_URL + "/" + data.shortUrl,
       );
+      toast.success("Link created and copied");
     } finally {
       setLoading(false);
     }
@@ -40,10 +49,12 @@ export default function Home() {
 
   async function handleCopy() {
     await navigator.clipboard.writeText(fullUrl);
+    toast.success("Copied to clipboard");
   }
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-neutral-950 text-white">
+      <Toaster position="top-center" />
       <section className="w-full max-w-md space-y-4">
         <header>
           <h1 className="text-3xl font-bold text-center">Trimmr</h1>
@@ -88,7 +99,7 @@ export default function Home() {
             <p className="text-sm text-neutral-400">Trimm'd link:</p>
             <div
               aria-live="polite"
-              className="px-3 py-2 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-between"
+              className="px-3 py-2 rounded-md bg-neutral-900 text-sm border border-neutral-800 flex items-center justify-between"
             >
               <a
                 href={`${fullUrl}`}
