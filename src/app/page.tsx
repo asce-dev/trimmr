@@ -53,85 +53,92 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-neutral-950 text-white">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-neutral-950 text-white">
       <Toaster position="top-center" />
-      <section className="w-full max-w-md space-y-4 p-3">
-        <header>
-          <h1 className="text-3xl font-bold text-center">Trimmr</h1>
-        </header>
+      <div className="w-full text-center bg-amber-600 p-2">
+        <p>
+          Demo only. Trimmed links are longer than intended, but functional.
+        </p>
+      </div>
+      <section className="flex-1 flex w-full max-w-md p-3 items-center">
+        <div className="w-full space-y-4">
+          <header>
+            <h1 className="text-3xl font-bold text-center">Trimmr</h1>
+          </header>
 
-        <form onSubmit={handleSubmit}>
-          <Field orientation="horizontal">
-            <FieldLabel htmlFor="url" className="sr-only">
-              Enter URL to shorten
-            </FieldLabel>
-            <Input
-              id="url"
-              type="url"
-              autoComplete="url"
-              name="url"
-              className="flex-1 rounded-md p-3 h-11 bg-neutral-900 border border-neutral-700"
-              placeholder="Enter URL to shorten..."
-              onChange={(e) => setUrl(e.target.value)}
-            />
-            <Button
-              type="submit"
-              className="px-6 py-2 h-11 rounded-md bg-white text-black gap-2 disabled:opacity-50 cursor-pointer"
-              disabled={loading}
-            >
-              {!loading ? (
-                <>
-                  <Scissors />
-                  Trim
-                </>
-              ) : (
-                <>
-                  <Loader2 className="animate-spin" />
-                  Trimming...
-                </>
-              )}
-            </Button>
-          </Field>
-        </form>
-
-        {fullUrl ? (
-          <div className="mt-6 space-y-2">
-            <p className="text-sm text-neutral-400">Trimm'd link:</p>
-            <div
-              aria-live="polite"
-              className="px-3 py-2 rounded-md bg-neutral-900 text-sm border border-neutral-800 flex items-center justify-between"
-            >
-              <a
-                href={fullUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="hover:underline truncate"
+          <form onSubmit={handleSubmit}>
+            <Field orientation="horizontal">
+              <FieldLabel htmlFor="url" className="sr-only">
+                Enter URL to shorten
+              </FieldLabel>
+              <Input
+                id="url"
+                type="url"
+                autoComplete="url"
+                name="url"
+                className="flex-1 rounded-md p-3 h-11 bg-neutral-900 border border-neutral-700"
+                placeholder="Enter URL to shorten..."
+                onChange={(e) => setUrl(e.target.value)}
+              />
+              <Button
+                type="submit"
+                className="px-6 py-2 h-11 rounded-md bg-white text-black gap-2 disabled:opacity-50 cursor-pointer"
+                disabled={loading}
               >
-                {fullUrl}
-              </a>
-              <div className="flex gap-1">
+                {!loading ? (
+                  <>
+                    <Scissors />
+                    Trim
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="animate-spin" />
+                    Trimming...
+                  </>
+                )}
+              </Button>
+            </Field>
+          </form>
+
+          {fullUrl ? (
+            <div className="mt-6 space-y-2">
+              <p className="text-sm text-neutral-400">Trimm'd link:</p>
+              <div
+                aria-live="polite"
+                className="px-3 py-2 rounded-md bg-neutral-900 text-sm border border-neutral-800 flex items-center justify-between"
+              >
                 <a
                   href={fullUrl}
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label="Open link"
-                  className="p-2 rounded-md hover:bg-neutral-800 transition flex items-center justify-center"
+                  className="hover:underline truncate"
                 >
-                  <ExternalLink className="w-4 h-4 text-neutral-300" />
+                  {fullUrl}
                 </a>
-                <Button
-                  type="button"
-                  onClick={handleCopy}
-                  aria-label="Copy link"
-                  title="Copy link"
-                  className="p-2 rounded-md hover:bg-neutral-800 transition cursor-pointer"
-                >
-                  <Copy className="w-4 h-4 text-neutral-300" />
-                </Button>
+                <div className="flex gap-1">
+                  <a
+                    href={fullUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label="Open link"
+                    className="p-2 rounded-md hover:bg-neutral-800 transition flex items-center justify-center"
+                  >
+                    <ExternalLink className="w-4 h-4 text-neutral-300" />
+                  </a>
+                  <Button
+                    type="button"
+                    onClick={handleCopy}
+                    aria-label="Copy link"
+                    title="Copy link"
+                    className="p-2 rounded-md hover:bg-neutral-800 transition cursor-pointer"
+                  >
+                    <Copy className="w-4 h-4 text-neutral-300" />
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </section>
     </main>
   );
