@@ -11,9 +11,12 @@ Live Site URL: [Click Me](https://trimmr-five.vercel.app/)
 - Basic URL validation
 
 ## Tech Stack
-- Next.js (App Router)
+- React
+- TypeScript
+- Next.js 
 - Supabase (Postgres)
 - Tailwind CSS
+- Shadcn
 
 ## API
 
