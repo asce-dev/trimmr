@@ -15,7 +15,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [fullUrl, setFullUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? window.location.origin;
+  const base = process.env.NEXT_PUBLIC_BASE_URL;
 
   async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     try {
